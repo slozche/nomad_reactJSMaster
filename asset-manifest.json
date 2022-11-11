@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/nomad_reactJSMaster/static/js/main.bb106cac.js",
+    "index.html": "/nomad_reactJSMaster/index.html",
+    "main.bb106cac.js.map": "/nomad_reactJSMaster/static/js/main.bb106cac.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.bb106cac.js"
+  ]
+}
