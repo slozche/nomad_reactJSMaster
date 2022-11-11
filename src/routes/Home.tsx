@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import BeatLoader from "react-spinners/BeatLoader";
+import Loader from "../components/Loader";
 
 const Container = styled.section`
   padding: 0 20px;
   max-width: 480px;
   margin: auto;
-  figure {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
 `;
 
 const Header = styled.header`
@@ -24,6 +19,13 @@ const Header = styled.header`
 const Title = styled.h1`
   color: ${(props) => props.theme.accentColor};
   font-size: 48px;
+`;
+
+const Link = styled.div`
+  transition: color 0.2s ease-in;
+  padding: 20px;
+  display: flex;
+  align-items: center;
 `;
 
 const Img = styled.img`
@@ -39,14 +41,8 @@ const Coin = styled.li`
   color: ${(props) => props.theme.bgColor};
   border-radius: 15px;
   margin-bottom: 10px;
-  a {
-    transition: color 0.2s ease-in;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-  }
   &:hover {
-    a {
+    div {
       color: ${(props) => props.theme.accentColor};
     }
   }
@@ -62,9 +58,10 @@ interface CoinInterface {
   type: string;
 }
 
-const Coins = () => {
+const Home = () => {
   const [coins, setCoins] = useState<CoinInterface[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -81,19 +78,20 @@ const Coins = () => {
         <Title>Coins</Title>
       </Header>
       {loading ? (
-        <figure>
-          <BeatLoader
-            size="15"
-            margin="4"
-            color="white"
-            speedMultiplier={0.7}
-          />
-        </figure>
+        <Loader />
       ) : (
         <CoinList>
           {coins.map((coin) => (
             <Coin key={coin.id}>
-              <Link to={`/${coin.id}`}>
+              <Link
+                onClick={() =>
+                  navigate(`/${coin.id}`, {
+                    state: {
+                      name: coin.name,
+                    },
+                  })
+                }
+              >
                 <Img
                   src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}
                 />
@@ -107,4 +105,4 @@ const Coins = () => {
   );
 };
 
-export default Coins;
+export default Home;
