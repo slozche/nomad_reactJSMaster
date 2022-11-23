@@ -12,6 +12,8 @@ import { useState, useEffect } from "react";
 import Chart from "./Chart";
 import Price from "./Price";
 import { Link } from "react-router-dom";
+import { useQuery } from "react-query";
+import { fetchCoinInfo, fetchCoinTickers } from "../api";
 
 const Container = styled.section`
   padding: 0 20px;
@@ -107,7 +109,7 @@ interface IInfoData {
   last_data_at: string;
 }
 
-interface IPriceData {
+interface ITickersData {
   id: string;
   name: string;
   symbol: string;
@@ -142,34 +144,28 @@ interface IPriceData {
 }
 
 const Detail = () => {
-  const [loading, setLoading] = useState(true);
-  const [info, setInfo] = useState<IInfoData>();
-  const [price, setPrice] = useState<IPriceData>();
-  const { coinId } = useParams<Record<string, string>>();
+  const { coinId } = useParams();
   const { state } = useLocation();
   const priceMatch = useMatch("/price");
   const chartMatch = useMatch("/chart");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    (async () => {
-      const infoData = await (
-        await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
-      ).json();
-      const priceData = await (
-        await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
-      ).json();
-      setInfo(infoData);
-      setPrice(priceData);
-      setLoading(false);
-    })();
-  }, [coinId]);
+  // 리액트 쿼리를 사용한 API 호출
+  const { isLoading: infoLoading, data: infoData } = useQuery(
+    [coinId, "coinInfo"],
+    () => fetchCoinInfo(coinId as string)
+  );
+  const { isLoading: tickersLoading, data: tickersData } = useQuery(
+    [coinId, "coinTickers"],
+    () => fetchCoinTickers(coinId as string)
+  );
+  const loading = infoLoading || tickersLoading;
   return (
     <Container>
       <Header>
         <BackBtn onClick={() => navigate(-1)}>&larr;</BackBtn>
         <Title>
-          {state?.name ? state.name : loading ? "Loading..." : info?.name}
+          {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
         </Title>
       </Header>
       {loading ? (
@@ -179,26 +175,26 @@ const Detail = () => {
           <Overview>
             <OverviewItem>
               <span>RANK:</span>
-              <span>{info?.rank}</span>
+              <span>{infoData?.rank}</span>
             </OverviewItem>
             <OverviewItem>
               <span>SYMBOL:</span>
-              <span>{info?.symbol}</span>
+              <span>{infoData?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
               <span>OPEN SOURCE:</span>
-              <span>{info?.open_source ? "YES" : "NO"}</span>
+              <span>{infoData?.open_source ? "YES" : "NO"}</span>
             </OverviewItem>
           </Overview>
-          <Description>{info?.description}</Description>
+          <Description>{infoData?.description}</Description>
           <Overview>
             <OverviewItem>
               <span>Total Supply:</span>
-              <span>{price?.total_supply}</span>
+              <span>{tickersData?.total_supply}</span>
             </OverviewItem>
             <OverviewItem>
               <span>Max Supply:</span>
-              <span>{price?.max_supply}</span>
+              <span>{tickersData?.max_supply}</span>
             </OverviewItem>
           </Overview>
           <Tabs>

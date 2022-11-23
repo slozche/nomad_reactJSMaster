@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Loader from "../components/Loader";
+import { fetchCoins } from "../api";
 
 const Container = styled.section`
   padding: 0 20px;
@@ -48,7 +50,7 @@ const Coin = styled.li`
   }
 `;
 
-interface CoinInterface {
+interface ICoins {
   id: string;
   name: string;
   symbol: string;
@@ -59,29 +61,21 @@ interface CoinInterface {
 }
 
 const Home = () => {
-  const [coins, setCoins] = useState<CoinInterface[]>([]);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    (async () => {
-      const response = await fetch("https://api.coinpaprika.com/v1/coins");
-      const json = await response.json();
-      setCoins(json.slice(0, 100));
-      setLoading(false);
-    })();
-  }, []);
+  // 리액트 쿼리를 사용한 API 호출
+  const { isLoading, data } = useQuery<ICoins[]>("allCoins", fetchCoins);
 
   return (
     <Container>
       <Header>
         <Title>Coins</Title>
       </Header>
-      {loading ? (
+      {isLoading ? (
         <Loader />
       ) : (
         <CoinList>
-          {coins.map((coin) => (
+          {data?.map((coin) => (
             <Coin key={coin.id}>
               <Link
                 onClick={() =>
@@ -92,9 +86,9 @@ const Home = () => {
                   })
                 }
               >
-                <Img
+                {/* <Img
                   src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}
-                />
+                /> */}
                 {coin.name} &rarr;
               </Link>
             </Coin>
