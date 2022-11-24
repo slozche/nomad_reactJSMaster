@@ -21,7 +21,6 @@ const Chart = ({ coinId }: chartProps) => {
     [coinId, "chart"],
     () => fetchChartData(coinId)
   );
-  console.log(data);
   return (
     <>
       {isLoading ? (
@@ -48,13 +47,15 @@ const Chart = ({ coinId }: chartProps) => {
               background: "transparent",
               type: "area",
             },
-            grid: { show: false },
             stroke: {
               curve: "smooth",
               width: 4,
             },
             yaxis: {
               show: false,
+              tooltip: {
+                enabled: true,
+              },
             },
             xaxis: {
               categories: data?.map((price) =>

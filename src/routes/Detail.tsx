@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import styled from "styled-components";
 import Loader from "../components/Loader";
-import { useState, useEffect } from "react";
+import { Helmet } from "react-helmet";
 import Chart from "./Chart";
 import Price from "./Price";
 import { Link } from "react-router-dom";
@@ -146,24 +146,31 @@ interface ITickersData {
 const Detail = () => {
   const { coinId } = useParams();
   const { state } = useLocation();
-  const priceMatch = useMatch("/price");
-  const chartMatch = useMatch("/chart");
+  const priceMatch = useMatch("/:coinId/price");
+  const chartMatch = useMatch("/:coinId/chart");
   const navigate = useNavigate();
 
   // 리액트 쿼리를 사용한 API 호출
-  const { isLoading: infoLoading, data: infoData } = useQuery(
+  const { isLoading: infoLoading, data: infoData } = useQuery<IInfoData>(
     [coinId, "coinInfo"],
     () => fetchCoinInfo(coinId as string)
   );
-  const { isLoading: tickersLoading, data: tickersData } = useQuery(
-    [coinId, "coinTickers"],
-    () => fetchCoinTickers(coinId as string)
-  );
+  const { isLoading: tickersLoading, data: tickersData } =
+    useQuery<ITickersData>(
+      [coinId, "coinTickers"],
+      () => fetchCoinTickers(coinId as string),
+      { refetchInterval: 5000 }
+    );
   const loading = infoLoading || tickersLoading;
   return (
     <Container>
+      <Helmet>
+        <title>
+          {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
+        </title>
+      </Helmet>
       <Header>
-        <BackBtn onClick={() => navigate(-1)}>&larr;</BackBtn>
+        <BackBtn onClick={() => navigate("/")}>&larr;</BackBtn>
         <Title>
           {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
         </Title>
@@ -182,8 +189,8 @@ const Detail = () => {
               <span>{infoData?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
-              <span>OPEN SOURCE:</span>
-              <span>{infoData?.open_source ? "YES" : "NO"}</span>
+              <span>Price:</span>
+              <span>{tickersData?.quotes.USD.price}</span>
             </OverviewItem>
           </Overview>
           <Description>{infoData?.description}</Description>
@@ -207,7 +214,7 @@ const Detail = () => {
           </Tabs>
           <Routes>
             <Route path="chart" element={<Chart coinId={coinId as string} />} />
-            <Route path="price" element={<Price />} />
+            <Route path="price" element={<Price coinId={coinId as string} />} />
           </Routes>
         </>
       )}
