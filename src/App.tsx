@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from "react-query/devtools";
 import { ThemeProvider } from "styled-components";
 import { darkTheme, lightTheme } from "./theme";
 import { useState } from "react";
+import MetaHelmet from "./components/Helmet";
 
 const GlobalStyle = createGlobalStyle`
   ${reset}
@@ -28,6 +29,7 @@ function App() {
   return (
     <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
       <GlobalStyle />
+      <MetaHelmet />
       <button
         onClick={() => {
           setIsDark((prev) => !prev);
