@@ -2,10 +2,12 @@ import Router from "./components/Router";
 import reset from "styled-reset";
 import { createGlobalStyle } from "styled-components";
 import { ReactQueryDevtools } from "react-query/devtools";
+import { ThemeProvider } from "styled-components";
+import { darkTheme, lightTheme } from "./theme";
+import { useState } from "react";
 
 const GlobalStyle = createGlobalStyle`
   ${reset}
-  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap');
   *{
     box-sizing: border-box;
   }
@@ -21,12 +23,22 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 function App() {
+  const [isDark, setIsDark] = useState(true);
+
   return (
-    <>
+    <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
       <GlobalStyle />
+      <button
+        onClick={() => {
+          setIsDark((prev) => !prev);
+          console.log(isDark);
+        }}
+      >
+        Dark?
+      </button>
       <Router />
       <ReactQueryDevtools initialIsOpen={false} />
-    </>
+    </ThemeProvider>
   );
 }
 
