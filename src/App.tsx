@@ -1,11 +1,12 @@
 import Router from "./components/Router";
 import reset from "styled-reset";
-import { createGlobalStyle } from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { ThemeProvider } from "styled-components";
 import { darkTheme, lightTheme } from "./theme";
 import { useState } from "react";
-import MetaHelmet from "./components/Helmet";
+import Header from "./components/Header";
+import Sidebar from "./components/Sidebar";
 
 const GlobalStyle = createGlobalStyle`
   ${reset}
@@ -23,22 +24,24 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
+const Body = styled.section`
+  height: calc(100vh - 80px);
+  padding-top: 80px;
+  padding-left: 240px;
+  display: flex;
+`;
+
 function App() {
   const [isDark, setIsDark] = useState(true);
 
   return (
     <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
       <GlobalStyle />
-      <MetaHelmet />
-      <button
-        onClick={() => {
-          setIsDark((prev) => !prev);
-          console.log(isDark);
-        }}
-      >
-        Dark?
-      </button>
-      <Router />
+      <Header setIsDark={setIsDark} />
+      <Body>
+        <Sidebar />
+        <Router />
+      </Body>
       <ReactQueryDevtools initialIsOpen={false} />
     </ThemeProvider>
   );

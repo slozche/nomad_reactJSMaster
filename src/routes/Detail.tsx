@@ -29,15 +29,6 @@ const Header = styled.header`
   align-items: center;
 `;
 
-const BackBtn = styled.button`
-  padding: 12px;
-  position: absolute;
-  left: 0;
-  color: white;
-  background: ${(props) => props.theme.bgColor};
-  cursor: pointer;
-`;
-
 const Title = styled.h1`
   color: ${(props) => props.theme.accentColor};
   font-size: 48px;
@@ -170,7 +161,6 @@ const Detail = () => {
         </title>
       </Helmet>
       <Header>
-        <BackBtn onClick={() => navigate("/")}>&larr;</BackBtn>
         <Title>
           {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
         </Title>

@@ -6,43 +6,56 @@ import Loader from "../components/Loader";
 import { fetchCoins } from "../api";
 
 const Container = styled.section`
-  padding: 0 20px;
-  max-width: 480px;
-  margin: auto;
+  padding: 0 40px;
 `;
 
-const Header = styled.header`
+const Title = styled.header`
   height: 10vh;
   display: flex;
   justify-content: center;
   align-items: center;
-`;
 
-const Title = styled.h1`
-  color: ${(props) => props.theme.accentColor};
-  font-size: 48px;
+  h1 {
+    color: ${(props) => props.theme.textColor};
+    font-size: 48px;
+    font-weight: bold;
+  }
 `;
 
 const Link = styled.div`
+  width: 140px;
+  height: 140px;
+  padding: 10px;
+  border-radius: 15px;
   transition: color 0.2s ease-in;
-  padding: 20px;
   display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  background: ${(props) => props.theme.subBgColor};
+  color: ${(props) => props.theme.textColor};
+  font-weight: bold;
+
+  p {
+    text-align: center;
+  }
 `;
 
 const Img = styled.img`
   width: 35px;
   height: 35px;
-  margin-right: 10px;
+  margin-bottom: 18px;
 `;
 
-const CoinList = styled.ul``;
+const CoinList = styled.ul`
+  display: flex;
+  flex-wrap: wrap;
+`;
 
 const Coin = styled.li`
-  background: white;
-  color: ${(props) => props.theme.textColor};
-  border-radius: 15px;
-  margin-bottom: 10px;
+  margin: 10px;
+  cursor: pointer;
+
   &:hover {
     div {
       color: ${(props) => props.theme.accentColor};
@@ -68,28 +81,29 @@ const Home = () => {
 
   return (
     <Container>
-      <Header>
-        <Title>Coins</Title>
-      </Header>
+      <Title>
+        <h1>Coins</h1>
+      </Title>
       {isLoading ? (
         <Loader />
       ) : (
         <CoinList>
           {data?.map((coin) => (
-            <Coin key={coin.id}>
-              <Link
-                onClick={() =>
-                  navigate(`/${coin.id}`, {
-                    state: {
-                      name: coin.name,
-                    },
-                  })
-                }
-              >
+            <Coin
+              key={coin.id}
+              onClick={() =>
+                navigate(`/${coin.id}`, {
+                  state: {
+                    name: coin.name,
+                  },
+                })
+              }
+            >
+              <Link>
                 <Img
                   src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}
                 />
-                {coin.name} &rarr;
+                <p>{coin.name}</p>
               </Link>
             </Coin>
           ))}
